@@ -10,9 +10,15 @@ Rails.application.routes.draw do
     member do
       get :followings
       get :followers
+      # お気に入り追加
+      get :likes
+      # ここまでお気に入り追加
     end
   end
-
+  
   resources :microposts, only: [:create, :destroy]
   resources :relationships, only: [:create, :destroy]
+  # お気に入り追加
+  resources :favorites, only: [:create, :destroy]
+  # ここまでお気に入り追加
 end

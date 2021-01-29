@@ -6,6 +6,10 @@ class User < ApplicationRecord
                     uniqueness: { case_sensitive: false }
   has_secure_password
 
+  # お気に入り追加
+  has_many :favorites, dependent: :destroy
+  has_many :likes, through: :favorites, source: :micropost
+  # ここまでお気に入り追加
   has_many :microposts
   has_many :relationships
   has_many :followings, through: :relationships, source: :follow
@@ -30,5 +34,20 @@ class User < ApplicationRecord
   def feed_microposts
     Micropost.where(user_id: self.following_ids + [self.id])
   end
+  
+  # お気に入り追加
+  def favorite(micropost)
+    self.favorites.find_or_create_by(micropost_id: micropost.id)
+  end
+
+  def unfavorite(micropost)
+    favorite = self.favorites.find_by(micropost_id: micropost.id)
+    favorite.destroy if favorite
+  end
+
+  def likes?(micropost)
+    self.likes.include?(micropost)
+  end
+  # ここまでお気に入り追加
   
 end
